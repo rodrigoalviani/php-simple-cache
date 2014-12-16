@@ -13,12 +13,12 @@ namespace Rodrigoalviani\Cache;
  */
 class Cache {
 
-	protected $filePath = 'cache/';
-	protected $cacheMaxAge = 86400;
-	protected $cacheExtension = '.cache';
-	protected $cacheFile;
-	protected $cacheExists;
-	protected $pageName;
+	public $filePath = 'cache/';
+	public $cacheMaxAge = 86400;
+	public $cacheExtension = '.cache';
+	public $cacheFile;
+	public $cacheExists;
+	public $pageName;
 
 	public function set_filePath ($value) {
 		$this->filePath = $value;
@@ -36,29 +36,30 @@ class Cache {
 		$this->pageName = $value;
 	}
 
-	private static function cacheFilename () {
-		return $this->path . md5($this->pageName) . $this->cacheExtension;
+	public function cacheFile () {
+		$this->cacheFile = $this->filePath . md5($this->pageName) . $this->cacheExtension;
+		return $this->cacheFile;
 	}
 
-	private static function cacheExists () {
-		return file_exists($this->cacheFilename);
+	public function cacheExists () {
+		return file_exists($this->cacheFile);
 	}
 
-	private static function cacheAge () {
-		return filemtime($this->cacheFilename);
+	public function cacheAge () {
+		return filemtime($this->cacheFile);
 	}
 
-	private static function cacheValid () {
-		if (round(abs(time() - self::cacheAge())) >= $this->cacheMaxAge) {
-			unlink($this->cacheFilename);
+	public function cacheValid () {
+		if (round(abs(time() - $this->cacheAge())) >= $this->cacheMaxAge) {
+			unlink($this->cacheFile);
 			return false;
 		} else {
 			return true;
 		}
 	}
 
-	private static function cacheWrite ($html) {
-		$f = fopen($this->cacheFilename, 'w');
+	public function cacheWrite ($html) {
+		$f = fopen($this->cacheFile, 'w');
 		fwrite($f, $html);
 		fclose($f);
 
@@ -69,10 +70,10 @@ class Cache {
 		if (!$this->pageName)
 			return false;
 
-		$this->cacheFilename = self::cacheFilename();
+		 $this->cacheFile();
 
-		if (self::cacheExists() && self::cacheValid()) {
-			require_once $this->cacheFilename;
+		if ($this->cacheExists() && $this->cacheValid()) {
+			require_once $this->cacheFile;
 			exit;
 		} else {
 			ob_start();
@@ -80,7 +81,7 @@ class Cache {
 	}
 
 	public function cacheEnd () {
-		self::cacheWrite(ob_get_contents());
+		$this->cacheWrite(ob_get_contents());
 		return ob_end_flush();
 	}
 
