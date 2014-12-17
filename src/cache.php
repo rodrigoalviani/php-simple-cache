@@ -63,6 +63,11 @@ class Cache {
 	}
 
 	public function cacheWrite ($html) {
+		if (!is_dir($this->filePath) && !@mkdir($this->filePath, 0777, true)) {
+			throw new \Exception('Cannot create and grant permission to cache folder!');
+			return false;
+		}
+
 		$f = fopen($this->cacheFile, 'w');
 		fwrite($f, $html);
 		fclose($f);
