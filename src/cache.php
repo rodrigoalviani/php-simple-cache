@@ -20,6 +20,10 @@ class Cache {
 	public $cacheExists;
 	public $pageName;
 
+	public function __construct($src) {
+		$this->pageName = $src;
+	}
+
 	public function set_filePath ($value) {
 		$this->filePath = $value;
 	}
