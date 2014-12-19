@@ -36,10 +36,6 @@ class Cache {
 		$this->cacheExtension = $value;
 	}
 
-	public function set_pageName ($value) {
-		$this->pageName = $value;
-	}
-
 	public function cacheFile () {
 		$this->cacheFile = $this->filePath . md5($this->pageName) . $this->cacheExtension;
 		return $this->cacheFile;
